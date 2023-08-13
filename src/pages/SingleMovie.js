@@ -9,6 +9,14 @@ export default function SingleMovie() {
 
   const movie = movieList.find((movie) => movie.id === +movieID);
 
+  if (!movie) {
+    return (
+      <h1 className="mt-[8rem] text-center text-3xl font-bold">
+        Movie not found
+      </h1>
+    );
+  }
+
   return (
     <main className="min-w-screen mt-[8rem] flex justify-center">
       <div className="flex w-4/5 justify-center gap-4 rounded-lg bg-slate-100 p-3 shadow-lg">

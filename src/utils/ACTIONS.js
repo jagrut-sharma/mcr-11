@@ -1,1 +1,4 @@
-export const ACTIONS = {};
+export const ACTIONS = {
+  ADD_MOVIE: "ADD MOVIE",
+  APPLY_FILTER: "APPLY FILTER",
+};

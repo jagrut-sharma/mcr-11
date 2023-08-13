@@ -1,8 +1,25 @@
 import { NavLink, Link } from "react-router-dom";
+import { useData } from "../context/dataContext";
+import { ACTIONS } from "../utils/ACTIONS";
 
 export default function Nav() {
+  const {
+    dataState: { filtersVal },
+    dataDispatch,
+  } = useData();
+
   const getClassName = ({ isActive }) => {
     return isActive ? "mx-2 font-bold" : "mx-2";
+  };
+
+  const handleChange = (e) => {
+    dataDispatch({
+      type: ACTIONS.APPLY_FILTER,
+      payload: {
+        category: e.target.name,
+        value: e.target.value,
+      },
+    });
   };
 
   return (
@@ -18,6 +35,8 @@ export default function Nav() {
           id="search"
           placeholder="search.."
           className="p-[2px] px-2"
+          value={filtersVal.search}
+          onChange={handleChange}
         />
       </div>
 

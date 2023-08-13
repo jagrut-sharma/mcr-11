@@ -1,8 +1,34 @@
 import { useNavigate } from "react-router-dom";
-import { ratings, releaseYears } from "../utils/constants";
+import { initialMovieForm, ratings, releaseYears } from "../utils/constants";
+import { useImmer } from "use-immer";
+import { useData } from "../context/dataContext";
+import { ACTIONS } from "../utils/ACTIONS";
 
 export default function AddNewMovie() {
+  const [movieData, setMovieData] = useImmer(initialMovieForm);
+  const {
+    dataState: { movieList },
+    dataDispatch,
+  } = useData();
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setMovieData((draft) => {
+      draft[e.target.name] = e.target.value;
+    });
+  };
+
+  const handleAddNew = () => {
+    const id = movieList.length + 1;
+    const castArr = movieData.cast.split(",").map((c) => c.trim());
+    const genreArr = movieData.genre.split(",").map((g) => g.trim());
+    const copyMovieData = { ...movieData, id, cast: castArr, genre: genreArr };
+    const payloadData = [...movieList, copyMovieData];
+
+    dataDispatch({ type: ACTIONS.ADD_MOVIE, payload: payloadData });
+    setMovieData(initialMovieForm);
+    navigate("/");
+  };
 
   return (
     <main className="mx-auto flex w-[50%] flex-col gap-4 p-8 font-Libre">
@@ -17,7 +43,9 @@ export default function AddNewMovie() {
           name="title"
           id="title"
           className="rounded border-2 border-gray-700 px-[5px]"
-          placeholder="title"
+          placeholder="Title"
+          onChange={handleChange}
+          value={movieData.title}
         />
       </div>
 
@@ -29,6 +57,8 @@ export default function AddNewMovie() {
           name="rating"
           id="rating"
           className="rounded border-2 border-gray-700 px-[5px]"
+          onChange={handleChange}
+          value={movieData.rating}
         >
           <option value="all">Select Rating</option>
           {ratings.map((rating) => (
@@ -47,6 +77,8 @@ export default function AddNewMovie() {
           name="year"
           id="year"
           className="rounded border-2 border-gray-700 px-[5px]"
+          onChange={handleChange}
+          value={movieData.year}
         >
           <option value="all">Release year</option>
           {releaseYears.map((year) => (
@@ -67,6 +99,8 @@ export default function AddNewMovie() {
           id="genre"
           className="rounded border-2 border-gray-700 px-[5px]"
           placeholder="enter genre separated by commas"
+          onChange={handleChange}
+          value={movieData.genre}
         />
       </div>
 
@@ -80,6 +114,8 @@ export default function AddNewMovie() {
           id="director"
           className="rounded border-2 border-gray-700 px-[5px]"
           placeholder="Director"
+          onChange={handleChange}
+          value={movieData.director}
         />
       </div>
 
@@ -93,6 +129,8 @@ export default function AddNewMovie() {
           id="writer"
           className="rounded border-2 border-gray-700 px-[5px]"
           placeholder="Writer"
+          onChange={handleChange}
+          value={movieData.writer}
         />
       </div>
 
@@ -106,6 +144,8 @@ export default function AddNewMovie() {
           id="cast"
           className="rounded border-2 border-gray-700 px-[5px]"
           placeholder="enter cast separated by commas"
+          onChange={handleChange}
+          value={movieData.cast}
         />
       </div>
 
@@ -120,6 +160,8 @@ export default function AddNewMovie() {
           rows="5"
           className="resize-none rounded border-2 border-gray-700 px-[5px]"
           placeholder="Summary"
+          onChange={handleChange}
+          value={movieData.summary}
         ></textarea>
       </div>
 
@@ -133,10 +175,15 @@ export default function AddNewMovie() {
           id="imageURL"
           className="rounded border-2 border-gray-700 px-[5px]"
           placeholder="image link"
+          onChange={handleChange}
+          value={movieData.imageURL}
         />
       </div>
 
-      <button className="mt-3 w-max rounded-md bg-black p-2 px-4 text-base font-bold text-white hover:opacity-80">
+      <button
+        className="mt-3 w-max rounded-md bg-black p-2 px-4 text-base font-bold text-white hover:opacity-80"
+        onClick={handleAddNew}
+      >
         Add Movie
       </button>
     </main>

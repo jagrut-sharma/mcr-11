@@ -1,22 +1,36 @@
 import { Link } from "react-router-dom";
 import { useData } from "../context/dataContext";
 import { ratings, releaseYears } from "../utils/constants";
+import { ACTIONS } from "../utils/ACTIONS";
 
 export default function Filters() {
   const {
-    dataState: { movieList },
+    dataState: { movieList, filtersVal },
+    dataDispatch,
   } = useData();
 
   const genres = [...new Set(movieList.flatMap(({ genre }) => genre))];
 
+  const handleChange = (e) => {
+    dataDispatch({
+      type: ACTIONS.APPLY_FILTER,
+      payload: {
+        category: e.target.name,
+        value: e.target.value,
+      },
+    });
+  };
+
   return (
     <div className="flex items-center justify-between">
-      <h3>Movies</h3>
+      <h3 className="text-xl font-bold">Movies</h3>
 
       <select
         name="genre"
         id="genre"
         className="rounded border-2 border-gray-700 px-[5px]"
+        value={filtersVal.genre}
+        onChange={handleChange}
       >
         <option value="all">All genres</option>
         {genres.map((genre) => (
@@ -30,6 +44,8 @@ export default function Filters() {
         name="year"
         id="year"
         className="rounded border-2 border-gray-700 px-[5px]"
+        value={filtersVal.year}
+        onChange={handleChange}
       >
         <option value="all">Release year</option>
         {releaseYears.map((year) => (
@@ -43,6 +59,8 @@ export default function Filters() {
         name="rating"
         id="rating"
         className="rounded border-2 border-gray-700 px-[5px]"
+        value={filtersVal.rating}
+        onChange={handleChange}
       >
         <option value="all">Ratings</option>
         {ratings.map((rating) => (
